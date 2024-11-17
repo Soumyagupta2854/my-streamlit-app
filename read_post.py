@@ -1,6 +1,7 @@
 import praw
+from prawcore.exceptions import Redirect, NotFound, Forbidden
 
-# Set up Reddit API client
+# Initialize Reddit API client
 reddit = praw.Reddit(
     client_id="K1rhO5hjcgWr86L0kW5pjQ",
     client_secret="KVWREayY7U1_OFzkQlKz00AFW0rXQQ",
@@ -9,20 +10,22 @@ reddit = praw.Reddit(
     password="soumya2854"
 )
 
-# Function to fetch posts by the authenticated user
 def get_user_posts(subreddit_name=None, post_limit=5):
     try:
+        # If a subreddit name is provided, validate it
+        if subreddit_name:
+            subreddit = reddit.subreddit(subreddit_name)
+            subreddit._fetch()  # Explicitly fetch subreddit details to trigger any exceptions
+            
+        # Fetch user posts
         user = reddit.user.me()
-        
-        # Fetch posts by the user
         user_posts = user.submissions.new(limit=post_limit)
         
-        # Store post data in a list of dictionaries
         posts_data = []
-        
         count = 0
+
         for post in user_posts:
-            # Filter by subreddit if a specific one is provided
+            # Filter by subreddit if specified
             if subreddit_name and post.subreddit.display_name.lower() != subreddit_name.lower():
                 continue
             
@@ -31,14 +34,20 @@ def get_user_posts(subreddit_name=None, post_limit=5):
                 'title': post.title,
                 'score': post.score,
                 'url': post.url,
-                'content': post.selftext[:200]  # Truncate to 200 characters
+                'content': post.selftext[:200]  # Truncate content for brevity
             })
-        
-        print(f"Fetched {count} posts.")
-        
-        return posts_data  # Return posts data
-    
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return []
 
+        # Handle case where no posts are found for the subreddit
+        if count == 0 and subreddit_name:
+            return f"No posts found in subreddit '{subreddit_name}'."
+
+        return posts_data
+
+    except Redirect:  # Handle invalid subreddit names
+        return f"Subreddit '{subreddit_name}' does not exist."
+    except NotFound:  # Handle any additional "not found" errors
+        return f"Subreddit '{subreddit_name}' does not exist."
+    except Forbidden:  # Handle private or restricted subreddits
+        return f"Subreddit '{subreddit_name}' is private or restricted."
+    except Exception as e:  # General exception handling
+        return f"An error occurred: {str(e)}"
