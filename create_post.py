@@ -14,10 +14,14 @@ def create_reddit_post(subreddit_name, title, content):
     try:
         # Make the post
         subreddit = reddit.subreddit(subreddit_name)
+        
+        # Check if subreddit exists and allow posting
         subreddit.submit(title, selftext=content)
         print("Post created successfully!")
         return "Post created successfully!"
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return f"An error occurred: {e}"
+    
+    except praw.exceptions.PRAWException:
+        print("Subreddit not valid.")
+        return "Subreddit not valid."
+
 
