@@ -4,16 +4,6 @@ from delete_post import delete_reddit_post
 from update_post import update_reddit_post
 from read_post import get_user_posts
 from create_post import create_reddit_post
-def is_valid_subreddit(subreddit_name):
-    try:
-        subreddit = reddit.subreddit(subreddit_name)
-        # Attempting to fetch the subreddit will raise an exception if it's invalid
-        if subreddit.display_name == subreddit_name:
-            return True
-        else:
-            return False
-    except Exception as e:
-        return False
 
 
 # Set up Reddit API client
@@ -46,57 +36,44 @@ if app_mode == "Create Post":
 
     if st.button("Create Post"):
         if subreddit_name and title and content:
-            # Check if subreddit is valid
-            if not is_valid_subreddit(subreddit_name):
-                st.error(f"'{subreddit_name}' is not a valid subreddit. Please try again.")
+            # Call the create post function
+            result_message = create_reddit_post(subreddit_name, title, content)
+            if "successfully" in result_message.lower():
+                st.success(result_message)
             else:
-                # Call the create post function
-                result_message = create_reddit_post(subreddit_name, title, content)
-                if "successfully" in result_message.lower():
-                    st.success(result_message)
-                else:
-                    st.error(result_message)
+                st.error(result_message)
         else:
             st.error("Please fill in all the fields.")
 
+
 # Read Posts
-# Read Posts
-elif app_mode == "Read Posts":
+if app_mode == "Read Posts":
     st.header("Read Your Posts")
 
-    # Create form to handle user input for reading posts
     with st.form(key='read_form'):
         subreddit_name = st.text_input("Enter Subreddit Name (leave blank for all)")
         post_limit = st.number_input("Enter Number of Posts to Display", min_value=1, max_value=10, value=5)
         
-        # Form submit button
         submit_button = st.form_submit_button(label="Show Posts")
         
-        # If the form is submitted
         if submit_button:
-            st.write(f"Showing posts with limit: {post_limit}")
+            st.write(f"Fetching posts (limit: {post_limit})...")
             
-            # Check if subreddit is valid before fetching posts
-            if subreddit_name and not is_valid_subreddit(subreddit_name):
-                st.error(f"'{subreddit_name}' is not a valid subreddit. Please try again.")
+            # Fetch posts
+            posts_data = get_user_posts(subreddit_name=subreddit_name, post_limit=post_limit)
+            
+            # Check if we got posts data or a specific message
+            if isinstance(posts_data, list) and posts_data:
+                for post in posts_data:
+                    st.write(f"**Title:** {post['title']}")
+                    st.write(f"**Score:** {post['score']}")
+                    st.write(f"**URL:** {post['url']}")
+                    st.write(f"**Content:** {post['content']}")
+                    st.markdown("---")
             else:
-                # Fetch posts
-                posts_data = get_user_posts(subreddit_name=subreddit_name, post_limit=post_limit)
-                
-                # Debugging: Print the fetched posts data to the Streamlit app
-                st.write("Fetched posts data:")
-                st.write(posts_data)  # This will help confirm if data is being fetched
-                
-                # Display posts if data is found
-                if posts_data:
-                    for post in posts_data:
-                        st.write(f"**Title:** {post['title']}")
-                        st.write(f"**Score:** {post['score']}")
-                        st.write(f"**URL:** {post['url']}")
-                        st.write(f"**Content:** {post['content']}")
-                        st.markdown("---")  # Separator
-                else:
-                    st.write("No posts found.")
+                st.error(posts_data)
+
+
 
 # Update Post
 elif app_mode == "Update Post":
