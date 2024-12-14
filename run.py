@@ -3,12 +3,10 @@ import asyncio
 import streamlit as st
 import dotenv
 import os
-dotenv.load_dotenv();
+dotenv.load_dotenv()
 
-
-BOT_TOKEN =  os.getenv('BOT_TOKEN')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 CHANNEL_ID = os.getenv('CHANNEL_ID')
-
 
 intents = discord.Intents.default()
 intents.messages = True
@@ -18,11 +16,13 @@ client = discord.Client(intents=intents)
 
 TARGET_CHANNEL = None
 
+# Create message function
 async def create_message(channel, content):
     """Creates a message in the Discord channel."""
     await channel.send(content)
     print("Message created successfully!")
 
+# Read messages function
 async def read_messages(channel, limit):
     """Reads messages from the Discord channel."""
     messages = await channel.history(limit=limit).flatten()
@@ -30,6 +30,7 @@ async def read_messages(channel, limit):
     for msg in messages:
         print(f"{msg.author}: {msg.content}")
 
+# Update message function
 async def update_message(channel, message_id, new_content):
     """Updates a bot-sent message by ID."""
     try:
@@ -42,6 +43,7 @@ async def update_message(channel, message_id, new_content):
     except discord.NotFound:
         print("Message not found.")
 
+# Delete message function
 async def delete_message(channel, message_id):
     """Deletes a bot-sent message by ID."""
     try:
@@ -53,7 +55,6 @@ async def delete_message(channel, message_id):
             print("You can only delete messages sent by the bot.")
     except discord.NotFound:
         print("Message not found.")
-
 
 @client.event
 async def on_ready():
@@ -81,40 +82,35 @@ async def on_ready():
 def run_command():
     """Display the command options and handle user input."""
     if TARGET_CHANNEL:
+        # Displaying CRUD tasks menu
         operation = st.selectbox("Choose an operation:", ["Create Message", "Read Messages", "Update Message", "Delete Message"])
 
         if operation == "Create Message":
             content = st.text_area("Enter the message content:")
             if st.button("Create"):
-                
                 asyncio.run_coroutine_threadsafe(create_message(TARGET_CHANNEL, content), client.loop)
-                asyncio.run(create_message(TARGET_CHANNEL, content))
 
         elif operation == "Read Messages":
             limit = st.number_input("Enter the number of messages to fetch:", min_value=1, step=1)
             if st.button("Read"):
                 asyncio.run_coroutine_threadsafe(read_messages(TARGET_CHANNEL, limit), client.loop)
-                # asyncio.run(read_messages(TARGET_CHANNEL, limit))
 
         elif operation == "Update Message":
             message_id = st.text_area("Enter the message ID to update:")
             new_content = st.text_area("Enter the new content:")
             if st.button("Update"):
                 id = int(message_id)
-                # asyncio.run(update_message(TARGET_CHANNEL, message_id, new_content))
                 asyncio.run_coroutine_threadsafe(update_message(TARGET_CHANNEL, id, new_content), client.loop)
 
         elif operation == "Delete Message":
             message_id = st.text_area("Enter the message ID to delete:")
             if st.button("Delete"):
                 id = int(message_id)
-                # asyncio.run(delete_message(TARGET_CHANNEL, message_id))
                 asyncio.run_coroutine_threadsafe(delete_message(TARGET_CHANNEL, id), client.loop)
 
 async def main():
     """Start the Discord bot."""
     await client.start(BOT_TOKEN)
-
 
 if __name__ == "__main__":
     st.sidebar.title("Bot Control")
