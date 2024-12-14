@@ -15,97 +15,102 @@ reddit = praw.Reddit(
     password="soumya2854"
 )
 
+# Streamlit App logic inside a main() function
+def main():
+    st.title("Reddit Post Management (CRUD)")
 
+    # Create Sidebar with navigation
+    st.sidebar.title("Navigation")
+    app_mode = st.sidebar.selectbox("Choose a task", ["Create Post", "Read Posts", "Update Post", "Delete Post"])
 
-# Streamlit App
-st.title("Reddit Post Management (CRUD)")
+    # Create Post
+    if app_mode == "Create Post":
+        st.header("Create a New Post")
 
-# Create Sidebar with navigation
-st.sidebar.title("Navigation")
-app_mode = st.sidebar.selectbox("Choose a task", ["Create Post", "Read Posts", "Update Post", "Delete Post"])
+        # User input fields for creating a post
+        subreddit_name = st.text_input("Enter Subreddit Name")
+        title = st.text_input("Enter Title of the Post")
+        content = st.text_area("Enter Content of the Post")
 
-# Create Post
-# Create Post
-if app_mode == "Create Post":
-    st.header("Create a New Post")
-    
-    # User input fields for creating a post
-    subreddit_name = st.text_input("Enter Subreddit Name")
-    title = st.text_input("Enter Title of the Post")
-    content = st.text_area("Enter Content of the Post")
-
-    if st.button("Create Post"):
-        if subreddit_name and title and content:
-            # Call the create post function
-            result_message = create_reddit_post(subreddit_name, title, content)
-            if "successfully" in result_message.lower():
-                st.success(result_message)
+        if st.button("Create Post"):
+            if subreddit_name and title and content:
+                # Call the create post function
+                result_message = create_reddit_post(subreddit_name, title, content)
+                if "successfully" in result_message.lower():
+                    st.success(result_message)
+                else:
+                    st.error(result_message)
             else:
-                st.error(result_message)
-        else:
-            st.error("Please fill in all the fields.")
+                st.error("Please fill in all the fields.")
 
 
-# Read Posts
-if app_mode == "Read Posts":
-    st.header("Read Your Posts")
+    # Read Posts
+    if app_mode == "Read Posts":
+        st.header("Read Your Posts")
 
-    with st.form(key='read_form'):
-        subreddit_name = st.text_input("Enter Subreddit Name (leave blank for all)")
-        post_limit = st.number_input("Enter Number of Posts to Display", min_value=1, max_value=10, value=5)
-        
-        submit_button = st.form_submit_button(label="Show Posts")
-        
-        if submit_button:
-            st.write(f"Fetching posts (limit: {post_limit})...")
+        with st.form(key='read_form'):
+            subreddit_name = st.text_input("Enter Subreddit Name (leave blank for all)")
+            post_limit = st.number_input("Enter Number of Posts to Display", min_value=1, max_value=10, value=5)
             
-            # Fetch posts
-            posts_data = get_user_posts(subreddit_name=subreddit_name, post_limit=post_limit)
+            submit_button = st.form_submit_button(label="Show Posts")
             
-            # Check if we got posts data or a specific message
-            if isinstance(posts_data, list) and posts_data:
-                for post in posts_data:
-                    st.write(f"**Title:** {post['title']}")
-                    st.write(f"**Score:** {post['score']}")
-                    st.write(f"**URL:** {post['url']}")
-                    st.write(f"**Content:** {post['content']}")
-                    st.markdown("---")
+            if submit_button:
+                st.write(f"Fetching posts (limit: {post_limit})...")
+
+                # Fetch posts
+                posts_data = get_user_posts(subreddit_name=subreddit_name, post_limit=post_limit)
+                
+                # Check if we got posts data or a specific message
+                if isinstance(posts_data, list) and posts_data:
+                    for post in posts_data:
+                        st.write(f"**Title:** {post['title']}")
+                        st.write(f"**Score:** {post['score']}")
+                        st.write(f"**URL:** {post['url']}")
+                        st.write(f"**Content:** {post['content']}")
+                        st.markdown("---")
+                else:
+                    st.error(posts_data)
+
+
+    # Update Post
+    elif app_mode == "Update Post":
+        st.header("Update an Existing Post")
+
+        # User input fields for updating a post
+        post_id = st.text_input("Enter Post ID (found in URL)")
+        new_content = st.text_area("Enter New Content for the Post")
+
+        if st.button("Update Post"):
+            if post_id and new_content:
+                # Call the update post function
+                result_message = update_reddit_post(post_id, new_content)
+                if "successfully" in result_message.lower():
+                    st.success(result_message)
+                else:
+                    st.error(result_message)
             else:
-                st.error(posts_data)
+                st.error("Please fill in all the fields.")
 
 
+    # Delete Post
+    elif app_mode == "Delete Post":
+        st.header("Delete a Post")
 
-# Update Post
-elif app_mode == "Update Post":
-    st.header("Update an Existing Post")
-    
-    # User input fields for updating a post
-    post_id = st.text_input("Enter Post ID (found in URL)")
-    new_content = st.text_area("Enter New Content for the Post")
+        # User input field for deleting a post
+        post_id = st.text_input("Enter Post ID to Delete")
 
-    if st.button("Update Post"):
-        if post_id and new_content:
-            # Call the update post function
-            result_message = update_reddit_post(post_id, new_content)
-            if "successfully" in result_message.lower():
-                st.success(result_message)
+        if st.button("Delete Post"):
+            if post_id:
+                # Call the function to delete the post
+                result_message = delete_reddit_post(post_id)
+                if "successfully" in result_message.lower():
+                    st.success(result_message)
+                else:
+                    st.error(result_message)
             else:
-                st.error(result_message)
-        else:
-            st.error("Please fill in all the fields.")
-elif app_mode == "Delete Post":
-    st.header("Delete a Post")
-    
-    # User input field for deleting a post
-    post_id = st.text_input("Enter Post ID to Delete")
+                st.error("Please enter a valid Post ID.")
 
-    if st.button("Delete Post"):
-        if post_id:
-            # Call the function to delete the post
-            result_message = delete_reddit_post(post_id)
-            if "successfully" in result_message.lower():
-                st.success(result_message)
-            else:
-                st.error(result_message)
-        else:
-            st.error("Please enter a valid Post ID.")
+
+# Calling the main function to run the app
+if __name__ == "__main__":
+    main()
