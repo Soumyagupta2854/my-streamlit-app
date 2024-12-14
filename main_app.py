@@ -9,7 +9,7 @@ def main():
 
     # Sidebar menu for navigation
     menu = ["Facebook", "Reddit", "Discord", "Exit"]
-    choice = st.sidebar.selectbox("Choose an operation", menu)
+    choice = st.sidebar.selectbox("Choose a social media platform", menu)
 
     # Facebook Post Management
     if choice == "Facebook":
