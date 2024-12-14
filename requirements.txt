@@ -28,6 +28,8 @@ numpy==2.2.0
 packaging==24.2
 pandas==2.2.3
 pillow==11.0.0
+praw
+praw-streamlit
 propcache==0.2.1
 protobuf==5.29.1
 pyarrow==18.1.0
