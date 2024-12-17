@@ -2,8 +2,8 @@ import praw
 
 # Set up Reddit API client
 reddit = praw.Reddit(
-    client_id="K1rhO5hjcgWr86L0kW5pjQ",
-    client_secret="KVWREayY7U1_OFzkQlKz00AFW0rXQQ",
+    client_id="ieNyn26FvRYU8Ho7pCZpLw",
+    client_secret="IkH2ZRtjAfdmhwpa__ST5mQIB6SxGg",
     user_agent="script:crud:v1.0 (by u/Holiday-Box3743)",
     username="Holiday-Box3743",
     password="soumya2854"
@@ -14,6 +14,10 @@ def update_reddit_post(post_id, new_content):
     try:
         # Fetch the post by ID
         post = reddit.submission(id=post_id)
+
+        # Check if the post exists (author will be None if post doesn't exist)
+        if post.author is None:
+            return "The post does not exist or has already been deleted."
         
         # Check if the post exists and if the authenticated user is the author
         if not post:
