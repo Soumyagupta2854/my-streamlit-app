@@ -3,8 +3,8 @@ from prawcore.exceptions import Redirect, NotFound, Forbidden
 
 # Initialize Reddit API client
 reddit = praw.Reddit(
-    client_id="K1rhO5hjcgWr86L0kW5pjQ",
-    client_secret="KVWREayY7U1_OFzkQlKz00AFW0rXQQ",
+    client_id="ieNyn26FvRYU8Ho7pCZpLw",
+    client_secret="IkH2ZRtjAfdmhwpa__ST5mQIB6SxGg",
     user_agent="script:crud:v1.0 (by u/Holiday-Box3743)",
     username="Holiday-Box3743",
     password="soumya2854"
@@ -31,6 +31,7 @@ def get_user_posts(subreddit_name=None, post_limit=5):
             
             count += 1
             posts_data.append({
+                'id': post.id,  # Include the post ID
                 'title': post.title,
                 'score': post.score,
                 'url': post.url,
@@ -51,3 +52,17 @@ def get_user_posts(subreddit_name=None, post_limit=5):
         return f"Subreddit '{subreddit_name}' is private or restricted."
     except Exception as e:  # General exception handling
         return f"An error occurred: {str(e)}"
+
+# Example Usage
+if __name__ == "__main__":
+    # Fetch user's posts without subreddit filter
+    print("Fetching all posts:")
+    posts = get_user_posts(post_limit=5)
+    for post in posts:
+        print(post)
+
+    # Fetch user's posts from a specific subreddit
+    subreddit_name = "learnpython"
+    print(f"\nFetching posts from subreddit '{subreddit_name}':")
+    posts_from_sub = get_user_posts(subreddit_name=subreddit_name, post_limit=5)
+    print(posts_from_sub)
