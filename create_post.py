@@ -2,8 +2,8 @@ import praw
 
 # Set up Reddit API client
 reddit = praw.Reddit(
-    client_id="K1rhO5hjcgWr86L0kW5pjQ",
-    client_secret="KVWREayY7U1_OFzkQlKz00AFW0rXQQ",
+    client_id="ieNyn26FvRYU8Ho7pCZpLw",
+    client_secret="IkH2ZRtjAfdmhwpa__ST5mQIB6SxGg",
     user_agent="script:crud:v1.0 (by u/Holiday-Box3743)",
     username="Holiday-Box3743",
     password="soumya2854"
@@ -26,5 +26,4 @@ def create_reddit_post(subreddit_name, title, content):
         print(f"Error: {e}")
         return "Subreddit not valid or other PRAW exception occurred."
 
-# Example usage
-create_reddit_post("test", "My Test Post", "This is the content of my test post.")
+
