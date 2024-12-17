@@ -1,6 +1,6 @@
 
 beautifulsoup4==4.12.2  # Ensure to use the latest version compatible with your setup
-requests
+
 Mastadon
 
 praw
