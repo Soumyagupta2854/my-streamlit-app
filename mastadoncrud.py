@@ -15,11 +15,8 @@ def clean_html(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
     return soup.get_text()
 
-# Streamlit Sidebar for selecting actions
-st.sidebar.title("Mastodon Post Manager")
-action = st.sidebar.radio("Choose Action", ['Post a Message', 'Read Posts', 'Update Post', 'Delete Post'])
-
-if action == 'Post a Message':
+# Function to post a message to Mastodon
+def post_message():
     st.title("Post a Message to Mastodon")
     message = st.text_area("Enter your message:")
     
@@ -34,7 +31,8 @@ if action == 'Post a Message':
         else:
             st.error("Please enter a message to post.")
 
-elif action == 'Read Posts':
+# Function to read previous posts from Mastodon
+def read_posts():
     st.title("Read Previous Posts")
     num_posts = st.number_input("Enter the number of posts to read:", min_value=1, max_value=100, value=5)
     
@@ -51,7 +49,8 @@ elif action == 'Read Posts':
         else:
             st.warning("No posts found!")
 
-elif action == 'Update Post':
+# Function to update an existing post
+def update_post():
     st.title("Update an Existing Post")
     post_id = st.text_input("Enter the Post ID to update:")
     updated_message = st.text_area("Enter the new message:")
@@ -74,7 +73,8 @@ elif action == 'Update Post':
         else:
             st.error("Please provide both post ID and updated message.")
 
-elif action == 'Delete Post':
+# Function to delete a post
+def delete_post():
     st.title("Delete a Post")
     post_id_to_delete = st.text_input("Enter the Post ID to delete:")
     
@@ -87,3 +87,23 @@ elif action == 'Delete Post':
                 st.error(f"Error deleting post: {e}")
         else:
             st.error("Please provide the post ID to delete.")
+
+# Main function to handle the app structure
+def main():
+    # Streamlit Sidebar for selecting actions
+    st.sidebar.title("Navigation")
+    action = st.sidebar.selectbox("Choose Action", ['Post a Message', 'Read Posts', 'Update Post', 'Delete Post'])
+
+    # Map action to respective function
+    if action == 'Post a Message':
+        post_message()
+    elif action == 'Read Posts':
+        read_posts()
+    elif action == 'Update Post':
+        update_post()
+    elif action == 'Delete Post':
+        delete_post()
+
+# Run the main function
+if __name__ == "__main__":
+    main()
