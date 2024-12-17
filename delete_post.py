@@ -2,11 +2,11 @@ import praw
 
 # Set up Reddit API client
 reddit = praw.Reddit(
-    client_id="K1rhO5hjcgWr86L0kW5pjQ",  # Your client_id
-    client_secret="KVWREayY7U1_OFzkQlKz00AFW0rXQQ",  # Your client_secret
-    user_agent="script:crud:v1.0 (by u/Holiday-Box3743)",  # Your user_agent
-    username="Holiday-Box3743",  # Your Reddit username
-    password="soumya2854"  # Your Reddit password
+    client_id="ieNyn26FvRYU8Ho7pCZpLw",
+    client_secret="IkH2ZRtjAfdmhwpa__ST5mQIB6SxGg",
+    user_agent="script:crud:v1.0 (by u/Holiday-Box3743)",
+    username="Holiday-Box3743",
+    password="soumya2854"
 )
 
 # Function to delete a Reddit post
@@ -15,10 +15,10 @@ def delete_reddit_post(post_id):
         # Fetch the post by ID
         post = reddit.submission(id=post_id)
         
-        # Check if the post exists
-        if not post:
-            return "Invalid Post ID or the post does not exist."
-        
+        # Check if the post exists (author will be None if post doesn't exist)
+        if post.author is None:
+            return "The post does not exist or has already been deleted."
+
         # Check if the authenticated user is the author
         if post.author.name != reddit.user.me().name:
             return "You can only delete posts that you have created."
@@ -29,5 +29,6 @@ def delete_reddit_post(post_id):
     
     except Exception as e:
         return f"An error occurred: {e}"
+
 
 
