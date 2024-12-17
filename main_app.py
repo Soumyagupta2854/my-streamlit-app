@@ -1,30 +1,30 @@
 import streamlit as st
-import facebook_app  # Import facebook_app.py
-import app  # Import app.py
-import run  # Import run.py
+import mastadoncrud  
+import app  
+import app_telegram  
 
 # Main function
 def main():
     st.title("Multi-Platform Post Management App")
 
     # Sidebar menu for navigation
-    menu = ["Facebook", "Reddit", "Discord", "Exit"]
+    menu = ["Telegram", "Reddit", "Mastadon", "Exit"]
     choice = st.sidebar.selectbox("Choose a social media platform", menu)
 
-    # Facebook Post Management
-    if choice == "Facebook":
-        st.header("Facebook Post Management App")
-        facebook_app.main()  # Call the main function from facebook_app.py
+    # Telegram Post Management
+    if choice == "Telegram":
+        
+        app_telegram.main()  
 
     # Reddit Post Management
     elif choice == "Reddit":
         st.header("Reddit Post Management App")
         app.main()  # Call the main function from app.py
 
-    # Discord Message Management
-    elif choice == "Discord":
-        st.header("Discord Bot Control Panel")
-        run.main()  # Call the main function from run.py
+    
+    elif choice == "Mastadon":
+        st.header("Mastadon Bot Control Panel")
+        mastadoncrud.main()  
 
     # Exit
     elif choice == "Exit":
