@@ -15,13 +15,16 @@ def create_reddit_post(subreddit_name, title, content):
         # Make the post
         subreddit = reddit.subreddit(subreddit_name)
         
-        # Check if subreddit exists and allow posting
-        subreddit.submit(title, selftext=content)
-        print("Post created successfully!")
-        return "Post created successfully!"
+        # Submit the post and store the result
+        submission = subreddit.submit(title, selftext=content)
+        
+        # Print the post ID
+        print(f"Post created successfully! Post ID: {submission.id}")
+        return f"Post created successfully! Post ID: {submission.id}"
     
-    except praw.exceptions.PRAWException:
-        print("Subreddit not valid.")
-        return "Subreddit not valid."
+    except praw.exceptions.PRAWException as e:
+        print(f"Error: {e}")
+        return "Subreddit not valid or other PRAW exception occurred."
 
-
+# Example usage
+create_reddit_post("test", "My Test Post", "This is the content of my test post.")
