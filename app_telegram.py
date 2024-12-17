@@ -13,18 +13,19 @@ if "messages_log" not in st.session_state:
 # Streamlit app
 def main():
     st.title("Telegram Bot Manager")
-    st.sidebar.header("Actions")
-    actions = ["Create Post", "Read Posts", "Update Post", "Delete Post"]
-    action = st.sidebar.radio("Choose Action", actions)
-
-    if action == "Create Post":
-        create_post()
-    elif action == "Read Posts":
-        read_posts()
-    elif action == "Update Post":
-        update_post()
-    elif action == "Delete Post":
-        delete_post()
+    st.sidebar.header("Telegram Bot Actions")
+    
+    # Dropdown for actions
+    actions = {
+        "Create Post": create_post,
+        "Read Posts": read_posts,
+        "Update Post": update_post,
+        "Delete Post": delete_post,
+    }
+    action = st.sidebar.selectbox("Choose an Action", list(actions.keys()))
+    
+    # Call the respective function
+    actions[action]()
 
 def create_post():
     """Function to create a new post"""
