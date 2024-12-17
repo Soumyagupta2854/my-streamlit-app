@@ -1,7 +1,7 @@
 
 beautifulsoup4  # Ensure to use the latest version compatible with your setup
 
-Mastadon
+Mastadon.py
 
 praw
 
